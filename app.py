@@ -11,10 +11,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
-# Initialize MediaPipe Face Detection
+# Initialize MediaPipe
 mp_face_detection = mp.solutions.face_detection
 mp_drawing = mp.solutions.drawing_utils
-face_detection = mp_face_detection.FaceDetection(min_detection_confidence=0.5)
+face_detection = mp_face_detection.FaceDetection(min_detection_confidence=0.3)
+
 
 class PeopleTracker:
     def __init__(self):
@@ -123,23 +124,6 @@ def video_feed():
     return Response(generate_frames(),
                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
-import os
-from deepface import DeepFace
-
-# Path to the cached weights directory
-weights_path = os.path.expanduser("~/.deepface/weights")
-
-# Ensure the weights directory exists
-if not os.path.exists(weights_path):
-    os.makedirs(weights_path)
-
-# Check if the model is already cached
-model_file = os.path.join(weights_path, "facial_expression_model_weights.h5")
-if not os.path.exists(model_file):
-    print("Downloading the facial expression model...")
-    DeepFace.download_model("facial_expression")  # or your relevant model download method
-else:
-    print("Model already cached.")
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000)) 
+    app.run(host="0.0.0.0", port=port)
