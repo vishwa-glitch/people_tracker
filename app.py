@@ -101,6 +101,14 @@ def generate_frames():
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/counts')
+def counts():
+    return {
+        'total': tracker.total_count,
+        'happy': tracker.happy_count,
+        'not_happy': tracker.not_happy_count
+    }
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
