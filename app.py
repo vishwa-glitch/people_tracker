@@ -99,7 +99,23 @@ def generate_frames():
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    def generate():
+        cap = cv2.VideoCapture(0)  # Access the webcam
+
+        while True:
+            success, frame = cap.read()
+            if not success:
+                break
+            else:
+                # Convert frame to JPEG
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame = buffer.tobytes()
+                
+                # Stream the frame
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/counts')
 def counts():
