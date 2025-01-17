@@ -1,0 +1,47 @@
+# Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Flask instance folder
+instance/
+
+# Flask config files (if any)
+config.py
+
+# Node.js dependencies (if you use frontend tools like React, Vue, etc.)
+node_modules/
+
+# IDE/editor folders and settings (adjust for your IDE/editor)
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# DeepFace model weights directory (adjust path if needed)
+.deepface/
+
+# Gunicorn log files (if any)
+gunicorn.log
+
+# Test, coverage reports
+.coverage
+nosetests.xml
+test-*.xml
+
+# Dependency directories
+pip-wheel-metadata/
+
+# Python egg info
+*.egg-info/
