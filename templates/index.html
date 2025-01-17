@@ -1,43 +1,45 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>People Tracking and Expression Analysis</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .video-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Video Stream</title>
 </head>
 <body>
-    <div class="container">
-        <h1>People Tracking and Expression Analysis</h1>
-        <div class="video-container">
-            <img src="{{ url_for('video_feed') }}" alt="Video Feed">
-        </div>
-    </div>
+    <h1>Real-Time Emotion Detection</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <script>
+        // Access the webcam and display the video feed in the <video> element
+        async function setupWebcam() {
+            const videoElement = document.getElementById('video');
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true
+            });
+            videoElement.srcObject = stream;
+        }
+
+        setupWebcam();
+
+        // Send video frames to the server for processing
+        const videoElement = document.getElementById('video');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const videoFeed = new XMLHttpRequest();
+
+        setInterval(() => {
+            // Draw current video frame to the canvas
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            // Get the image data from the canvas
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append("video", blob);
+
+                // Send the video frame to the server for processing
+                videoFeed.open("POST", "/video_feed", true);
+                videoFeed.send(blob);
+            }, 'image/jpeg');
+        }, 100);  // Sending frames every 100ms
+    </script>
 </body>
 </html>
