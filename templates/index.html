@@ -3,43 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebRTC Video Stream</title>
+    <title>People Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        #video {
+            margin-top: 20px;
+            border: 2px solid black;
+            max-width: 100%;
+            max-height: 80vh;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .stat-item {
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Real-Time Emotion Detection</h1>
-    <video id="video" width="640" height="480" autoplay></video>
+
+    <h1>Live People Tracker</h1>
+    <div id="video-container">
+        <img id="video" src="{{ url_for('video_feed') }}" alt="Live Video Feed" />
+    </div>
+
+    <div class="stats">
+        <div class="stat-item">
+            <strong>Total People Count:</strong> <span id="totalCount">0</span>
+        </div>
+        <div class="stat-item">
+            <strong>Happy People Count:</strong> <span id="happyCount">0</span>
+        </div>
+        <div class="stat-item">
+            <strong>Not Happy People Count:</strong> <span id="notHappyCount">0</span>
+        </div>
+    </div>
+
     <script>
-        // Access the webcam and display the video feed in the <video> element
-        async function setupWebcam() {
-            const videoElement = document.getElementById('video');
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: true
-            });
-            videoElement.srcObject = stream;
+        const videoElement = document.getElementById('video');
+        
+        // This function will handle updating the counts dynamically.
+        function updateCounts(total, happy, notHappy) {
+            document.getElementById('totalCount').innerText = total;
+            document.getElementById('happyCount').innerText = happy;
+            document.getElementById('notHappyCount').innerText = notHappy;
         }
 
-        setupWebcam();
-
-        // Send video frames to the server for processing
-        const videoElement = document.getElementById('video');
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const videoFeed = new XMLHttpRequest();
-
-        setInterval(() => {
-            // Draw current video frame to the canvas
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-            // Get the image data from the canvas
-            canvas.toBlob(async (blob) => {
-                const formData = new FormData();
-                formData.append("video", blob);
-
-                // Send the video frame to the server for processing
-                videoFeed.open("POST", "/video_feed", true);
-                videoFeed.send(blob);
-            }, 'image/jpeg');
-        }, 100);  // Sending frames every 100ms
     </script>
+
 </body>
 </html>
+
