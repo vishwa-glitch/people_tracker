@@ -50,17 +50,21 @@
     </div>
 
     <script>
-        const videoElement = document.getElementById('video');
-        
-        // This function will handle updating the counts dynamically.
-        function updateCounts(total, happy, notHappy) {
-            document.getElementById('totalCount').innerText = total;
-            document.getElementById('happyCount').innerText = happy;
-            document.getElementById('notHappyCount').innerText = notHappy;
+        // Function to fetch and update counts
+        function fetchCounts() {
+            fetch('/counts')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalCount').innerText = data.total;
+                    document.getElementById('happyCount').innerText = data.happy;
+                    document.getElementById('notHappyCount').innerText = data.not_happy;
+                })
+                .catch(error => console.error('Error fetching counts:', error));
         }
 
+        // Update counts every 1 second
+        setInterval(fetchCounts, 1000);
     </script>
 
 </body>
 </html>
-
