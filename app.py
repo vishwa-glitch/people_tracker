@@ -1,8 +1,9 @@
+import os
 from flask import Flask, render_template, Response
 import cv2
 import numpy as np
 from deepface import DeepFace
-import tensorflow as tf                                               
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -97,8 +98,17 @@ class PeopleTracker:
 tracker = PeopleTracker()
 
 def generate_frames():
-    camera = cv2.VideoCapture(0)
-    
+    # Use cv2.VideoCapture(0) locally for testing, but handle it for cloud deployment
+    try:
+        camera = cv2.VideoCapture(0)  # Try to access the default camera
+        if not camera.isOpened():
+            print("Camera not accessible")
+            camera.release()
+            return
+    except Exception as e:
+        print(f"Error accessing camera: {e}")
+        return
+
     while True:
         success, frame = camera.read()
         if not success:
@@ -125,5 +135,6 @@ def video_feed():
                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000)) 
+    port = int(os.environ.get("PORT", 10000))  # Ensure it uses the correct port for Render
     app.run(host="0.0.0.0", port=port)
+
